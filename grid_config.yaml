@@ -1,0 +1,45 @@
+# Main compute configuration.
+compute:
+
+  # Add cloud configuration here.
+  provider:
+
+    credentials: dddcdbe7-d180-4638-8cca-19fafe4a33eb    # Cloud key ID
+    region: us-east-1             # Cloud region
+    vendor: aws                   # Vendor, only aws
+
+  # Training configuration.
+  train:
+
+    cpus: 1                       # Number of CPUs
+    gpus: 0                       # Number of GPUs
+    instance: t2.xlarge           # AWS instance type
+    memory: null                  # RAM memory
+    nodes: 0                      # Nodes to start with
+    scale_down_seconds: 1800      # Second in between every scaling down evaluation
+    datastore_name: yolov5s 
+    datastore_version: 1 
+    datastore_mount_dir: /gridai/datasets    
+
+    # Your environment variables
+    environment:
+      HOME=/gridai/project
+
+    # Dependency file specification
+    dependency_file_info:
+      package_manager: pip
+      path: ./requirements.txt # can have any name 
+
+    actions:
+      on_before_training_start:
+        - apt update && apt install -y zip htop screen libgl1-mesa-glx 
+
+hyper_params:
+  settings:
+    strategy: random_search
+    trials: 1
+  params:
+    data: coco.yaml 
+    cfg: yolov5s.yaml 
+    weights: '' 
+    batch-size: 64
